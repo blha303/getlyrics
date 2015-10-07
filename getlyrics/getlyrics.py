@@ -24,7 +24,7 @@ def prompt(*args):
 
 
 def parse_lyrics_page(soup):
-    return [div for div in soup.findAll('div') if div.find('i')][-1].text.strip()
+    return [div for div in soup.findAll('div')][22].text.strip()
 
 def make_soup(html):
     return Soup(html, "html.parser")
