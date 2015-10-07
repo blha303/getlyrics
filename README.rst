@@ -1,5 +1,5 @@
-getsong
-=======
+getlyrics
+=========
 
 A Python program which gets the lyrics for a song and outputs them to
 stdout
