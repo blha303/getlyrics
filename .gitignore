@@ -1,0 +1,6 @@
+*.m4a
+*.pyc
+env/
+build/
+dist/
+getsong.egg-info/
