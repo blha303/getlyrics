@@ -9,6 +9,7 @@ except ImportError: # Python 2
 import argparse
 import sys
 import os
+from pydoc import pager
 from bs4 import BeautifulSoup as Soup
 from bs4.element import Tag
 
@@ -42,16 +43,28 @@ def get_lyrics(search, index=None, startFromZero=False):
             return parse_lyrics_page(make_soup(urlopen(results[index].find('a')["href"]).read()))
     else:
         outp = []
-        for td in results:
-            x = ""
-            for a in td.contents[:4]:
+        for n, td in enumerate(results):
+            x = "{}. ".format(n if startFromZero else n+1)
+            for a in td.contents[1:4]:
                 if type(a) is Tag:
                     x += a.text
                 else:
                     x += a
             outp.append(x.strip())
-        return "Results:\n" + "\n".join(outp)
+        print("Results:", end="\n\t", file=sys.stderr)
+        print("\n\t".join(outp), file=sys.stderr)
 
+        if os.isatty(sys.stdout.fileno()):
+            while index is None:
+                try:
+                    index = int(prompt("enter your choice: "))
+                    result = results[index if startFromZero else index+1]
+                except ValueError:
+                    print("Try again. Has to be a number.", file=sys.stderr)
+                except IndexError:
+                    print("Check your input. Ctrl-C to back out", file=sys.stderr)
+                    index = None
+            return parse_lyrics_page(make_soup(urlopen(result.find('a')["href"]).read()))
 
 def main():
     parser = argparse.ArgumentParser(prog="getlyrics", epilog="Data loaded from AZLyrics.com. Used without permission. This is effectively a shortcut for opening a browser, but I guess it does skip loading ads.")
@@ -59,7 +72,14 @@ def main():
     parser.add_argument("-i", "--index", help="Specify song index, if multiple results are returned", type=int)
     parser.add_argument("--startFromZero", help="Start index from zero instead of one", action="store_true")
     args = parser.parse_args()
-    print(get_lyrics(args.term, index=args.index, startFromZero=args.startFromZero))
+    try:
+        lyric = get_lyrics(args.term, index=args.index, startFromZero=args.startFromZero)
+    except KeyboardInterrupt:
+        return 10
+    if os.isatty(sys.stdout.fileno()):
+        pager(lyric)
+    else:
+        print(lyric)
     return 0
 
 
