@@ -10,7 +10,7 @@ setup(
     entry_points = {
         "console_scripts": ['getlyrics = getlyrics.getlyrics:main']
         },
-    version = "2.0.0",
+    version = "2.0.1",
     description = "A Python program which gets the lyrics for a song and outputs them to stdout",
     long_description = long_descr,
     author = "Steven Smith",

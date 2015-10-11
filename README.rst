@@ -18,7 +18,6 @@ Usage
       -h, --help            show this help message and exit
       -i INDEX, --index INDEX
                             Specify song index, if multiple results are returned
-      --startFromZero       Start index from zero instead of one
 
     Data loaded from AZLyrics.com. Used without permission. This is effectively a
     shortcut for opening a browser, but I guess it does skip loading ads.
