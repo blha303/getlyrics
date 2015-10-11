@@ -13,8 +13,6 @@ from pydoc import pager
 from bs4 import BeautifulSoup as Soup
 from bs4.element import Tag
 
-real_stdout = sys.stdout
-
 def prompt(*args):
     old_stdout = sys.stdout
     try:
@@ -30,7 +28,7 @@ def parse_lyrics_page(soup):
 def make_soup(html):
     return Soup(html, "html.parser")
 
-def get_lyrics(search, index=None, startFromZero=False):
+def get_lyrics(search, index=None):
     results = [td for td in make_soup(urlopen("http://search.azlyrics.com/search.php?" + urlencode({'q': search})).read()).findAll('td') if td and td.find('a')][:-1]
     if len(results) == 1:
         return parse_lyrics_page(make_soup(urlopen(results[0].find('a')["href"]).read()))
@@ -38,13 +36,11 @@ def get_lyrics(search, index=None, startFromZero=False):
         return
     elif index is not None:
         if type(index) in (int, float):
-            if not startFromZero:
-                index = index - 1
             return parse_lyrics_page(make_soup(urlopen(results[index].find('a')["href"]).read()))
     else:
         outp = []
         for n, td in enumerate(results):
-            x = "{}. ".format(n if startFromZero else n+1)
+            x = "{}. ".format(n)
             for a in td.contents[1:4]:
                 if type(a) is Tag:
                     x += a.text
@@ -58,7 +54,7 @@ def get_lyrics(search, index=None, startFromZero=False):
             while index is None:
                 try:
                     index = int(prompt("enter your choice: "))
-                    result = results[index if startFromZero else index+1]
+                    result = results[index]
                 except ValueError:
                     print("Try again. Has to be a number.", file=sys.stderr)
                 except IndexError:
@@ -70,11 +66,11 @@ def main():
     parser = argparse.ArgumentParser(prog="getlyrics", epilog="Data loaded from AZLyrics.com. Used without permission. This is effectively a shortcut for opening a browser, but I guess it does skip loading ads.")
     parser.add_argument("term", help="Search term")
     parser.add_argument("-i", "--index", help="Specify song index, if multiple results are returned", type=int)
-    parser.add_argument("--startFromZero", help="Start index from zero instead of one", action="store_true")
     args = parser.parse_args()
     try:
-        lyric = get_lyrics(args.term, index=args.index, startFromZero=args.startFromZero)
+        lyric = get_lyrics(args.term, index=args.index)
     except KeyboardInterrupt:
+        print("", file=sys.stderr)
         return 10
     if os.isatty(sys.stdout.fileno()):
         pager(lyric)
