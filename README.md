@@ -6,7 +6,7 @@ A Python program which gets the lyrics for a song and outputs them to stdout
 Usage
 -----
 
-    usage: getlyrics [-h] [-i INDEX] [--startFromZero] term
+    usage: getlyrics [-h] [-i INDEX] [-u] term
     
     positional arguments:
       term                  Search term
@@ -15,6 +15,7 @@ Usage
       -h, --help            show this help message and exit
       -i INDEX, --index INDEX
                             Specify song index, if multiple results are returned
+      -u, --get-url         Returns the URL for the lyrics (instead of lyrics)
     
     Data loaded from AZLyrics.com. Used without permission. This is effectively a
     shortcut for opening a browser, but I guess it does skip loading ads.
