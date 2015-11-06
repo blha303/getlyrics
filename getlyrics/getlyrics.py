@@ -23,14 +23,14 @@ def prompt(*args):
 
 
 def parse_lyrics_page(url):
-    soup = make_soup(urlopen(url).read())
+    soup = make_soup(url)
     return [div for div in soup.findAll('div')][22].text.strip()
 
-def make_soup(html):
-    return Soup(html, 'html.parser')
+def make_soup(url):
+    return Soup(urlopen(url).read(), 'html.parser')
 
 def get_lyrics(search, index=None, urlonly=False):
-    results = [td for td in make_soup(urlopen('http://search.azlyrics.com/search.php?' + urlencode({'q': search})).read()).findAll('td') if td and td.find('a')][:-1]
+    results = [td for td in make_soup('http://search.azlyrics.com/search.php?' + urlencode({'q': search})).findAll('td') if td and td.find('a')][:-1]
     if len(results) == 1:
         return parse_lyrics_page(results[0].find('a')['href']) if not urlonly else results[0].find('a')['href']
     elif not results:
