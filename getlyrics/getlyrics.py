@@ -74,6 +74,9 @@ def main():
     except KeyboardInterrupt:
         print('', file=sys.stderr)
         return 10
+    if not lyric:
+        print('No results', file=sys.stderr)
+        return 20
     if os.isatty(sys.stdout.fileno()) and not args.get_url:
         pager(lyric)
     else:
